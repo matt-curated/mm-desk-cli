@@ -1,0 +1,161 @@
+{
+  "environment": "UAT",
+  "url": "wss://desk.testnet.curated.finance",
+  "session": {
+    "mm_id": 28,
+    "scopes": [
+      "trade",
+      "read"
+    ]
+  },
+  "summary": {
+    "real_order_attempts": 3,
+    "accepted_orders": 0,
+    "last_rejection": "insufficient_balance",
+    "open_orders_after": [],
+    "local_tests_passed": 25,
+    "live_successful_order_modify_cancel": false,
+    "live_withdrawal": false,
+    "live_algo_execution": false
+  },
+  "runs": [
+    {
+      "url": "wss://desk.testnet.curated.finance",
+      "started_at_ms": 1794993566793,
+      "checks": [
+        {
+          "method": "mm_balances",
+          "result": []
+        },
+        {
+          "method": "mm_deposits",
+          "result": []
+        },
+        {
+          "method": "mm_withdrawals",
+          "result": []
+        },
+        {
+          "method": "mm_listRequests",
+          "result": []
+        },
+        {
+          "method": "mm_placeOrder",
+          "params": {
+            "book": "btc_usdt",
+            "side": "buy",
+            "price": "1",
+            "quantity": "1",
+            "tif": "gtc",
+            "post_only": true
+          },
+          "result": {
+            "code": "invalid_terms",
+            "detail": "invalid_terms: quantity 1 is not a multiple of the step 10000",
+            "status": "rejected"
+          }
+        }
+      ],
+      "session": {
+        "mm_id": 28,
+        "scopes": [
+          "trade",
+          "read"
+        ]
+      },
+      "open_orders_after": []
+    },
+    {
+      "url": "wss://desk.testnet.curated.finance",
+      "started_at_ms": 1794993622738,
+      "checks": [
+        {
+          "method": "mm_balances",
+          "result": []
+        },
+        {
+          "method": "mm_deposits",
+          "result": []
+        },
+        {
+          "method": "mm_withdrawals",
+          "result": []
+        },
+        {
+          "method": "mm_listRequests",
+          "result": []
+        },
+        {
+          "method": "mm_placeOrder",
+          "params": {
+            "book": "btc_usdt",
+            "side": "buy",
+            "price": "1",
+            "quantity": "10000",
+            "tif": "gtc",
+            "post_only": true
+          },
+          "result": {
+            "code": "invalid_terms",
+            "detail": "invalid_terms: notional of 10000 at 1 is below the minimum 1000000",
+            "status": "rejected"
+          }
+        }
+      ],
+      "session": {
+        "mm_id": 28,
+        "scopes": [
+          "trade",
+          "read"
+        ]
+      },
+      "open_orders_after": []
+    },
+    {
+      "url": "wss://desk.testnet.curated.finance",
+      "started_at_ms": 1795000840860,
+      "checks": [
+        {
+          "method": "mm_balances",
+          "result": []
+        },
+        {
+          "method": "mm_deposits",
+          "result": []
+        },
+        {
+          "method": "mm_withdrawals",
+          "result": []
+        },
+        {
+          "method": "mm_listRequests",
+          "result": []
+        },
+        {
+          "method": "mm_placeOrder",
+          "params": {
+            "book": "btc_usdt",
+            "side": "buy",
+            "price": "10000000000",
+            "quantity": "10000",
+            "tif": "gtc",
+            "post_only": true
+          },
+          "result": {
+            "code": "insufficient_balance",
+            "detail": "needs 10000000000 of 0xaca71f1748aa4c3291bbccd905b71224cb1b602f, available 0",
+            "status": "rejected"
+          }
+        }
+      ],
+      "session": {
+        "mm_id": 28,
+        "scopes": [
+          "trade",
+          "read"
+        ]
+      },
+      "open_orders_after": []
+    }
+  ]
+}

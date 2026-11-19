@@ -1,0 +1,7 @@
+#!/bin/sh
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+DEFAULT_PYTHON=python3
+if [ -x "$SCRIPT_DIR/.venv/bin/python" ]; then
+    DEFAULT_PYTHON="$SCRIPT_DIR/.venv/bin/python"
+fi
+exec "${MM_DESK_PYTHON:-$DEFAULT_PYTHON}" -B "$SCRIPT_DIR/mm_desk.py" "$@"

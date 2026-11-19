@@ -1,0 +1,277 @@
+{
+  "schema_version": 1,
+  "network": "testnet",
+  "source": "http://intel-nuc10.codlet-spica.ts.net:8765/reference/testnet.html",
+  "retrieved_on": "2026-11-19",
+  "source_parameters_verified_on": "2026-11-13",
+  "asset_registry": "assets.json",
+  "raw_price_formula": "quote_price_per_base * price_scale",
+  "raw_quantity_rule": "multiple of quantity_step_raw",
+  "kline_intervals": [
+    "1m",
+    "5m",
+    "15m",
+    "30m",
+    "1h",
+    "4h",
+    "1d",
+    "3d",
+    "1w",
+    "1month"
+  ],
+  "orderbook_max_depth": 200,
+  "markets": {
+    "btc_usdt": {
+      "pair_id": "0x94f9058ffb63844d2f5cbbdf95df187a5f84d186f015401162ca545bc1c47fa5",
+      "market_type": 0,
+      "market_type_name": "spot",
+      "base_asset": "0x5aa2fbdff776e63a5176dacbe1d0e098369566ea",
+      "quote_asset": "0xaca71f1748aa4c3291bbccd905b71224cb1b602f",
+      "price_scale": 100,
+      "quantity_step_raw": "10000",
+      "quantity_step": "0.0001",
+      "minimum_notional_quote": "1",
+      "minimum_notional_quote_raw": "1000000",
+      "maker_fee_bps": 10,
+      "taker_fee_bps": 20,
+      "fee_asset": "received",
+      "channels": {
+        "market": "market:btc_usdt:0",
+        "kline": "kline:btc_usdt:0:{interval}",
+        "mm": "mm:btc_usdt:0"
+      },
+      "orderbook_snapshot_url": "https://testnet-staging.curated.finance/api/trade/orderbook?marketType=0&pairId=0x94f9058ffb63844d2f5cbbdf95df187a5f84d186f015401162ca545bc1c47fa5&depth=200"
+    },
+    "eth_usdt": {
+      "pair_id": "0x6c09ad380633edc7056b08de895717cc5814e5ea662832e5e78c4be94fde58f4",
+      "market_type": 0,
+      "market_type_name": "spot",
+      "base_asset": "0xc31263c9c9af298d673cb934521a02ced9678d50",
+      "quote_asset": "0xaca71f1748aa4c3291bbccd905b71224cb1b602f",
+      "price_scale": 100,
+      "quantity_step_raw": "100000000000000",
+      "quantity_step": "0.0001",
+      "minimum_notional_quote": "1",
+      "minimum_notional_quote_raw": "1000000",
+      "maker_fee_bps": 10,
+      "taker_fee_bps": 20,
+      "fee_asset": "received",
+      "channels": {
+        "market": "market:eth_usdt:0",
+        "kline": "kline:eth_usdt:0:{interval}",
+        "mm": "mm:eth_usdt:0"
+      },
+      "orderbook_snapshot_url": "https://testnet-staging.curated.finance/api/trade/orderbook?marketType=0&pairId=0x6c09ad380633edc7056b08de895717cc5814e5ea662832e5e78c4be94fde58f4&depth=200"
+    },
+    "sol_usdt": {
+      "pair_id": "0xb7e6aedfcd220091fc46e2f4a6c1c4076e5b1029a87b912dac8fc656ed70dbc3",
+      "market_type": 0,
+      "market_type_name": "spot",
+      "base_asset": "0x221b9068bb7ebd1f3d6145bfd6c27c812e3f2244",
+      "quote_asset": "0xaca71f1748aa4c3291bbccd905b71224cb1b602f",
+      "price_scale": 100,
+      "quantity_step_raw": "100000",
+      "quantity_step": "0.0001",
+      "minimum_notional_quote": "1",
+      "minimum_notional_quote_raw": "1000000",
+      "maker_fee_bps": 10,
+      "taker_fee_bps": 20,
+      "fee_asset": "received",
+      "channels": {
+        "market": "market:sol_usdt:0",
+        "kline": "kline:sol_usdt:0:{interval}",
+        "mm": "mm:sol_usdt:0"
+      },
+      "orderbook_snapshot_url": "https://testnet-staging.curated.finance/api/trade/orderbook?marketType=0&pairId=0xb7e6aedfcd220091fc46e2f4a6c1c4076e5b1029a87b912dac8fc656ed70dbc3&depth=200"
+    },
+    "bnb_usdt": {
+      "pair_id": "0x2a3915d60d8fadf0e61ffd1be070acc37513ef1fc26c5ba88feed07ae615ea75",
+      "market_type": 0,
+      "market_type_name": "spot",
+      "base_asset": "0xabddbb45a2ca808062d16432f699cd656d2744f0",
+      "quote_asset": "0xaca71f1748aa4c3291bbccd905b71224cb1b602f",
+      "price_scale": 100,
+      "quantity_step_raw": "100000000000000",
+      "quantity_step": "0.0001",
+      "minimum_notional_quote": "1",
+      "minimum_notional_quote_raw": "1000000",
+      "maker_fee_bps": 10,
+      "taker_fee_bps": 20,
+      "fee_asset": "received",
+      "channels": {
+        "market": "market:bnb_usdt:0",
+        "kline": "kline:bnb_usdt:0:{interval}",
+        "mm": "mm:bnb_usdt:0"
+      },
+      "orderbook_snapshot_url": "https://testnet-staging.curated.finance/api/trade/orderbook?marketType=0&pairId=0x2a3915d60d8fadf0e61ffd1be070acc37513ef1fc26c5ba88feed07ae615ea75&depth=200"
+    },
+    "xrp_usdt": {
+      "pair_id": "0x020d7c2bc01cf5283154f39cfb2d501d7bcbc9f10257d292dd51d36e7138501a",
+      "market_type": 0,
+      "market_type_name": "spot",
+      "base_asset": "0x3d93b78c52d259857fb5dc1ef273d078984114b1",
+      "quote_asset": "0xaca71f1748aa4c3291bbccd905b71224cb1b602f",
+      "price_scale": 10000,
+      "quantity_step_raw": "10000",
+      "quantity_step": "0.01",
+      "minimum_notional_quote": "1",
+      "minimum_notional_quote_raw": "1000000",
+      "maker_fee_bps": 10,
+      "taker_fee_bps": 20,
+      "fee_asset": "received",
+      "channels": {
+        "market": "market:xrp_usdt:0",
+        "kline": "kline:xrp_usdt:0:{interval}",
+        "mm": "mm:xrp_usdt:0"
+      },
+      "orderbook_snapshot_url": "https://testnet-staging.curated.finance/api/trade/orderbook?marketType=0&pairId=0x020d7c2bc01cf5283154f39cfb2d501d7bcbc9f10257d292dd51d36e7138501a&depth=200"
+    },
+    "doge_usdt": {
+      "pair_id": "0xf1b115732e2c0c3f17bf2cdedbe2f38f8f863d1a178ee9eca5b9a6bd39914155",
+      "market_type": 0,
+      "market_type_name": "spot",
+      "base_asset": "0x496904de84f193689d14ab5d1114f0eef4ca36ce",
+      "quote_asset": "0xaca71f1748aa4c3291bbccd905b71224cb1b602f",
+      "price_scale": 10000,
+      "quantity_step_raw": "1000000",
+      "quantity_step": "0.01",
+      "minimum_notional_quote": "1",
+      "minimum_notional_quote_raw": "1000000",
+      "maker_fee_bps": 10,
+      "taker_fee_bps": 20,
+      "fee_asset": "received",
+      "channels": {
+        "market": "market:doge_usdt:0",
+        "kline": "kline:doge_usdt:0:{interval}",
+        "mm": "mm:doge_usdt:0"
+      },
+      "orderbook_snapshot_url": "https://testnet-staging.curated.finance/api/trade/orderbook?marketType=0&pairId=0xf1b115732e2c0c3f17bf2cdedbe2f38f8f863d1a178ee9eca5b9a6bd39914155&depth=200"
+    },
+    "aapl_usdt": {
+      "pair_id": "0x7b38b3c687ce130ae06f9e2b7f787d615ea651f78711bc08976d3dc7068c5da4",
+      "market_type": 0,
+      "market_type_name": "spot",
+      "base_asset": "0x7b10b3e115090177009eeed41b94c2e11520b5d1",
+      "quote_asset": "0xaca71f1748aa4c3291bbccd905b71224cb1b602f",
+      "price_scale": 100,
+      "quantity_step_raw": "100000000000000",
+      "quantity_step": "0.0001",
+      "minimum_notional_quote": "1",
+      "minimum_notional_quote_raw": "1000000",
+      "maker_fee_bps": 10,
+      "taker_fee_bps": 20,
+      "fee_asset": "received",
+      "channels": {
+        "market": "market:aapl_usdt:0",
+        "kline": "kline:aapl_usdt:0:{interval}",
+        "mm": "mm:aapl_usdt:0"
+      },
+      "orderbook_snapshot_url": "https://testnet-staging.curated.finance/api/trade/orderbook?marketType=0&pairId=0x7b38b3c687ce130ae06f9e2b7f787d615ea651f78711bc08976d3dc7068c5da4&depth=200"
+    },
+    "spcx_usdt": {
+      "pair_id": "0x25b24036ccc7dfa2b27bed9e52c00e426f8dc8f1ee047d592dd74725b2d46cbc",
+      "market_type": 0,
+      "market_type_name": "spot",
+      "base_asset": "0xa1437ea4356cd1c01d1f402a5b962a6a3a87abde",
+      "quote_asset": "0xaca71f1748aa4c3291bbccd905b71224cb1b602f",
+      "price_scale": 100,
+      "quantity_step_raw": "100000000000000",
+      "quantity_step": "0.0001",
+      "minimum_notional_quote": "1",
+      "minimum_notional_quote_raw": "1000000",
+      "maker_fee_bps": 10,
+      "taker_fee_bps": 20,
+      "fee_asset": "received",
+      "channels": {
+        "market": "market:spcx_usdt:0",
+        "kline": "kline:spcx_usdt:0:{interval}",
+        "mm": "mm:spcx_usdt:0"
+      },
+      "orderbook_snapshot_url": "https://testnet-staging.curated.finance/api/trade/orderbook?marketType=0&pairId=0x25b24036ccc7dfa2b27bed9e52c00e426f8dc8f1ee047d592dd74725b2d46cbc&depth=200"
+    },
+    "tsla_usdt": {
+      "pair_id": "0x3b3dbcb319b1fa63a64e0fc2fd433ce595bb72d22697d519c82cac7b4472b57f",
+      "market_type": 0,
+      "market_type_name": "spot",
+      "base_asset": "0x4e8411b7c03fa96362223cb64bcd0ddad4b4a841",
+      "quote_asset": "0xaca71f1748aa4c3291bbccd905b71224cb1b602f",
+      "price_scale": 100,
+      "quantity_step_raw": "100000000000000",
+      "quantity_step": "0.0001",
+      "minimum_notional_quote": "1",
+      "minimum_notional_quote_raw": "1000000",
+      "maker_fee_bps": 10,
+      "taker_fee_bps": 20,
+      "fee_asset": "received",
+      "channels": {
+        "market": "market:tsla_usdt:0",
+        "kline": "kline:tsla_usdt:0:{interval}",
+        "mm": "mm:tsla_usdt:0"
+      },
+      "orderbook_snapshot_url": "https://testnet-staging.curated.finance/api/trade/orderbook?marketType=0&pairId=0x3b3dbcb319b1fa63a64e0fc2fd433ce595bb72d22697d519c82cac7b4472b57f&depth=200"
+    },
+    "msft_usdt": {
+      "pair_id": "0x9f58eb679068adebe282a74b960340a4327599829631e71871da163a6b2f226d",
+      "market_type": 0,
+      "market_type_name": "spot",
+      "base_asset": "0x4ccb2c48b3e6a0ce770cf898a01e282876e7569f",
+      "quote_asset": "0xaca71f1748aa4c3291bbccd905b71224cb1b602f",
+      "price_scale": 100,
+      "quantity_step_raw": "100000000000000",
+      "quantity_step": "0.0001",
+      "minimum_notional_quote": "1",
+      "minimum_notional_quote_raw": "1000000",
+      "maker_fee_bps": 10,
+      "taker_fee_bps": 20,
+      "fee_asset": "received",
+      "channels": {
+        "market": "market:msft_usdt:0",
+        "kline": "kline:msft_usdt:0:{interval}",
+        "mm": "mm:msft_usdt:0"
+      },
+      "orderbook_snapshot_url": "https://testnet-staging.curated.finance/api/trade/orderbook?marketType=0&pairId=0x9f58eb679068adebe282a74b960340a4327599829631e71871da163a6b2f226d&depth=200"
+    },
+    "nvda_usdt": {
+      "pair_id": "0xdfd56d5d85f6a6206cbccfaf20ee2b1ab35f2d85c26bf8f7432efae10d6ab696",
+      "market_type": 0,
+      "market_type_name": "spot",
+      "base_asset": "0x3a4263be4efc46cf8c0c44042f18f772e6dfa324",
+      "quote_asset": "0xaca71f1748aa4c3291bbccd905b71224cb1b602f",
+      "price_scale": 100,
+      "quantity_step_raw": "100000000000000",
+      "quantity_step": "0.0001",
+      "minimum_notional_quote": "1",
+      "minimum_notional_quote_raw": "1000000",
+      "maker_fee_bps": 10,
+      "taker_fee_bps": 20,
+      "fee_asset": "received",
+      "channels": {
+        "market": "market:nvda_usdt:0",
+        "kline": "kline:nvda_usdt:0:{interval}",
+        "mm": "mm:nvda_usdt:0"
+      },
+      "orderbook_snapshot_url": "https://testnet-staging.curated.finance/api/trade/orderbook?marketType=0&pairId=0xdfd56d5d85f6a6206cbccfaf20ee2b1ab35f2d85c26bf8f7432efae10d6ab696&depth=200"
+    },
+    "wmt_usdt": {
+      "pair_id": "0x24f493d8728ae892e481a428efef95a021be6d0d44a9599bab6d60470e27ae79",
+      "market_type": 0,
+      "market_type_name": "spot",
+      "base_asset": "0x32f4c4d0b4b7e0362dfe2bad44f650dd7f666d31",
+      "quote_asset": "0xaca71f1748aa4c3291bbccd905b71224cb1b602f",
+      "price_scale": 100,
+      "quantity_step_raw": "100000000000000",
+      "quantity_step": "0.0001",
+      "minimum_notional_quote": "1",
+      "minimum_notional_quote_raw": "1000000",
+      "maker_fee_bps": 10,
+      "taker_fee_bps": 20,
+      "fee_asset": "received",
+      "channels": {
+        "market": "market:wmt_usdt:0",
+        "kline": "kline:wmt_usdt:0:{interval}",
+        "mm": "mm:wmt_usdt:0"
+      },
+      "orderbook_snapshot_url": "https://testnet-staging.curated.finance/api/trade/orderbook?marketType=0&pairId=0x24f493d8728ae892e481a428efef95a021be6d0d44a9599bab6d60470e27ae79&depth=200"
+    }
+  }
+}

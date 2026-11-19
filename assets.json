@@ -1,0 +1,54 @@
+{
+  "0xaca71f1748aa4c3291bbccd905b71224cb1b602f": {
+    "name": "USDT",
+    "decimals": 6
+  },
+  "0x5aa2fbdff776e63a5176dacbe1d0e098369566ea": {
+    "name": "BTC",
+    "decimals": 8
+  },
+  "0xc31263c9c9af298d673cb934521a02ced9678d50": {
+    "name": "ETH",
+    "decimals": 18
+  },
+  "0x221b9068bb7ebd1f3d6145bfd6c27c812e3f2244": {
+    "name": "SOL",
+    "decimals": 9
+  },
+  "0xabddbb45a2ca808062d16432f699cd656d2744f0": {
+    "name": "BNB",
+    "decimals": 18
+  },
+  "0x3d93b78c52d259857fb5dc1ef273d078984114b1": {
+    "name": "XRP",
+    "decimals": 6
+  },
+  "0x496904de84f193689d14ab5d1114f0eef4ca36ce": {
+    "name": "DOGE",
+    "decimals": 8
+  },
+  "0x7b10b3e115090177009eeed41b94c2e11520b5d1": {
+    "name": "AAPL",
+    "decimals": 18
+  },
+  "0xa1437ea4356cd1c01d1f402a5b962a6a3a87abde": {
+    "name": "SPCX",
+    "decimals": 18
+  },
+  "0x4e8411b7c03fa96362223cb64bcd0ddad4b4a841": {
+    "name": "TSLA",
+    "decimals": 18
+  },
+  "0x4ccb2c48b3e6a0ce770cf898a01e282876e7569f": {
+    "name": "MSFT",
+    "decimals": 18
+  },
+  "0x3a4263be4efc46cf8c0c44042f18f772e6dfa324": {
+    "name": "NVDA",
+    "decimals": 18
+  },
+  "0x32f4c4d0b4b7e0362dfe2bad44f650dd7f666d31": {
+    "name": "WMT",
+    "decimals": 18
+  }
+}

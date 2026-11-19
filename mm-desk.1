@@ -1,0 +1,609 @@
+.TH MM-DESK 1 "November 20, 2026" "MM Desk CLI 1.0.0" "User Commands"
+.SH NAME
+mm-desk \- interactive client for the mm_pool_desk API
+.SH SYNOPSIS
+.B mm-desk
+.RI [ options ]
+.br
+.B mm-desk
+.RI [ options ]
+.BI \-c " command"
+.RB [ \-c " command ..."]
+.SH DESCRIPTION
+.B mm-desk
+connects to a desk over WebSocket and provides an interactive command prompt.
+It supports authentication, orders, balances, history, withdrawals,
+and TWAP/VWAP schedules.
+.PP
+At the prompt,
+.B help
+lists commands and
+.B help COMMAND
+shows a command's options.
+For API commands,
+.B COMMAND \-\-help
+also displays usage without executing the command.
+The
+.B manual
+command opens this page with the system
+.BR man (1)
+viewer.
+The viewer selects its normal pager and respects the user's pager
+configuration.
+With
+.BR less (1),
+Space advances a page, / searches, n repeats a search, and q returns to the
+CLI.
+.PP
+Without a terminal, output can be redirected or piped using normal shell
+rules.
+The CLI does not implement its own pager or print Markdown source as help.
+.SH OPTIONS
+.TP
+.BR \-h , " \-\-help"
+Display startup usage and exit successfully without connecting.
+.TP
+.B \-\-version
+Display the version and exit.
+.TP
+.B \-\-manual
+Open this manual with man(1), without connecting.
+.TP
+.BI \-\-url " URL"
+Desk WebSocket endpoint. Overrides MM_DESK_URL.
+Default: wss://desk.testnet.curated.finance.
+.TP
+.BI \-\-seed-file " FILE"
+Authenticate at startup using a hexadecimal Ed25519 desk seed.
+.TP
+.BI \-\-master-file " FILE"
+Derive a desk seed and chain owner from an mm-keys.py master seed,
+then authenticate. Mutually exclusive with --seed-file.
+.TP
+.BI \-\-owner " ADDRESS"
+Associate this chain owner with automatic login. Requires a seed or master
+file.
+.TP
+.BI \-\-timeout " SECONDS"
+Positive finite request timeout. Default: 15.
+.TP
+.BI \-\-latency-log " FILE"
+Append order request timings as JSONL. Default:
+$XDG_STATE_HOME/mm-desk/latency.jsonl, or
+~/.local/state/mm-desk/latency.jsonl if XDG_STATE_HOME is unset or relative.
+.TP
+.B \-\-no-proxy
+Disable automatic WebSocket proxy use. HTTP chain queries use urllib's
+normal proxy settings.
+.TP
+.B \-\-offline
+Skip the startup desk connection. Explicit chain queries remain available.
+Cannot be combined with automatic login.
+.TP
+.B \-\-demo
+Start a local protocol simulator with a public test key.
+Cannot be combined with a URL, MM_DESK_URL, login options, or --offline.
+.TP
+.BR \-c , " \-\-command " COMMAND
+Execute one interactive command and exit. May be repeated for a sequence
+within the same connection. Processing stops on an error or business
+rejection.
+.SH INTERACTIVE COMMANDS
+.TP
+.B connect [URL]
+Connect or reconnect. Omitting URL reuses the previous endpoint.
+Reconnecting clears authentication and requires login again.
+.TP
+.B disconnect
+Close the connection and clear local authentication.
+.TP
+.B login [--seed-file FILE | --master-file FILE] [--owner ADDRESS]
+Obtain a challenge, sign it, and authenticate. Without a file, read a desk
+seed with input hidden. Non-interactive login requires a file.
+.TP
+.B pubkey [--seed-file FILE | --master-file FILE]
+Derive the public API key locally without logging in.
+.TP
+.B check-balance [ADDRESS | --owner ADDRESS] [--rpc-url URL] [--limit N] [--json]
+With an address, query that chain owner in any connection state.
+Without an address after login, query both the desk and linked chain owner.
+Before login, an omitted address prompts interactively; non-interactive
+queries require an address. The default chain endpoint is
+https://rpc.testnet.curated.finance and the default leaf limit is 1000.
+.TP
+.B chain-balances
+Alias for check-balance, with the same options.
+.TP
+.B rpc METHOD [JSON | @FILE]
+Call a JSON-RPC method. Omitted params are an empty object. Known methods
+validate parameters and fill omitted timestamps; unknown methods receive
+the object as supplied. Raw JSON does not translate token names.
+.TP
+.B status
+Show the connection, desk account, scopes, linked chain owner and source,
+and ignored-message count.
+.TP
+.B now
+Print current Unix milliseconds.
+.TP
+.B help [COMMAND]
+Show commands or the selected command's options. ? and methods are aliases.
+.TP
+.B manual
+Open this page with man(1). Reading the manual keeps the WebSocket event
+loop running. Use help COMMAND for a short command reference.
+.TP
+.B quit
+Exit and close the connection. exit is an alias. Ctrl-D and Ctrl-C also exit.
+Exit does not submit cancellations.
+.SH ORDER REQUEST LATENCY
+place, batch, modify, cancel, cancel-all, algo-place, and algo-cancel
+print TTL (RTT) in milliseconds to standard error when a request completes.
+Full method names and raw rpc calls have the same behavior.
+One batch has one RTT for the entire request.
+.PP
+A monotonic clock measures from immediately before WebSocket send until the
+matching response arrives. RTT includes network transit and desk processing;
+it excludes local validation, JSON serialization, log writes, and display.
+It does not measure subsequent execution or settlement.
+Rejections and RPC errors also have RTTs. Without a matching response,
+timeouts and connection failures print an unavailable RTT and elapsed wait.
+Requests rejected locally before sending are not timed. No request is retried.
+.PP
+One JSONL record is appended per completed request. Records contain a UTC
+timestamp, run ID, sanitized endpoint, account and request IDs, method,
+order/request references, outcome, rtt_ms, and elapsed_ms.
+rtt_ms is null when no matching response arrives.
+Credentials and full payloads are excluded. A log-write failure reports a
+warning without changing the request result.
+.PP
+The interactive banner shows the log path. The default is
+$XDG_STATE_HOME/mm-desk/latency.jsonl, falling back to
+~/.local/state/mm-desk/latency.jsonl. Override it with --latency-log FILE.
+The file is created on first use with mode 0600 and appended across restarts.
+.SH TRANSFERS
+.B transfer to-desk
+.B (--key-file FILE | --master-file FILE)
+.B --token TOKEN (--amount DECIMAL | --raw-amount INTEGER)
+.RI [ options ]
+.PP
+Deposit from the linked chain account into the desk pool through the spot
+contract's deposit_pool command. The chain key must match the owner linked
+to the current login. Environment parameters come from desk_networks.json.
+Ordinary transfers to the pool owner are not desk deposits.
+.PP
+.B transfer from-desk
+.B --token TOKEN (--amount DECIMAL | --raw-amount INTEGER)
+.RI [ options ]
+.PP
+Withdraw through mm_withdraw. Requires withdraw scope when submitting.
+--to defaults to the linked chain owner and must match that owner if given.
+No chain private key is required for this direction.
+.PP
+Both directions accept --rpc-url, --timeout, --wait-timeout, --no-wait,
+--json, and mutually exclusive --yes / --dry-run. The default is preview
+only. to-desk also accepts repeated --leaf inputs.
+.PP
+--amount is in normal token units; --raw-amount is in smallest units.
+The original low-level withdraw command still uses raw --amount values.
+.PP
+Without --yes, to-desk runs the chain simulation and from-desk prints a
+local request preview. The desk has no withdrawal simulation endpoint.
+With --yes, submissions are sent once. Unless --no-wait is used, deposits
+wait for chain finality then a matching mm_deposits txhash, while withdrawals
+wait for their matching request and finalized payout transaction.
+.PP
+--wait-timeout defaults to 120 seconds for each waiting stage. A timeout
+does not undo a transfer. Errors retain the transaction hash or request ID
+for follow-up queries; never automatically resubmit.
+.PP
+Use transfer to-desk --help or transfer from-desk --help for full options.
+.SH AUTHENTICATION
+The server supplies a challenge through mm_challenge. The client signs
+the UTF-8 prefix mm_pool_desk/login: followed by the decoded challenge bytes
+using the Ed25519 desk seed. mm_login sends the public API key and signature;
+private seeds are processed locally.
+.PP
+A master seed is optional. It can derive both desk and chain keys using
+the same HKDF labels as mm-keys.py. With a .desk.seed filename, a matching
+sibling .master.seed may be used after verifying that it derives that desk
+seed.
+.PP
+Chain-owner selection is: explicit login --owner, a matching master,
+then the endpoint/public-key association in accounts.json.
+Pasted-seed and raw login also use accounts.json.
+The login API returns mm_id and scopes, not the chain owner.
+A failed login, another key, or a disconnected session cannot inherit the
+previous session's owner association.
+.SH BALANCES
+The balances command calls mm_balances for the authenticated desk account.
+check-balance without an address after login displays desk and chain balances
+in separate sections. An empty desk list displays "Empty (no desk balances)."
+JSON mode retains the empty array. If one source fails, the other result
+remains visible and the command reports failure.
+.PP
+An explicit chain address never changes the owner linked to the login.
+Chain queries include undeleted leaves whose second index is 3, summing
+the second 32-byte data word by operator. Integer arithmetic preserves
+precision.
+Only one page is fetched; full pages, continuation markers, and malformed
+records are reported as potentially incomplete.
+.PP
+Chain assets do not establish available desk funds or deposit credit.
+Use transfer to-desk to create a deposit_pool transaction.
+.SH DATA CONVENTIONS
+Prices, quantities, and amounts are decimal strings of raw on-chain integers.
+Fractions and floating-point amounts are not accepted. Market scales, ticks,
+minimum notionals, and execution rules are enforced by the desk.
+.PP
+Timestamps use Unix milliseconds. Known methods fill omitted ts values;
+explicit values are preserved. The protocol requires clock skew within
+five seconds. History intervals include from and exclude to.
+.PP
+Modify accepts quantity as a new total or remaining as a new remainder;
+they cannot be supplied together. Batch accepts 1 to 50 order objects.
+Withdraw requires withdraw scope and the owner's Cura account address.
+.SH DESK API COMMANDS
+Short commands and full mm_* method names accept the same options.
+Scope "any" requires authentication; other named scopes must be granted
+to the current key. Optional fields are omitted unless supplied, except
+for automatic ts values.
+
+.SS "challenge"
+Get a login challenge.
+.br
+RPC: mm_challenge. Scope: none.
+No parameters.
+
+.SS "login-raw"
+Authenticate with a public key and signature (normally use login).
+.br
+RPC: mm_login. Scope: none.
+.TP
+.B "\-\-key\-id HEX32"
+Required. 32\-byte Ed25519 public key in hexadecimal.
+.TP
+.B "\-\-signature HEX64"
+Required. 64\-byte Ed25519 signature in hexadecimal.
+
+.SS "deadman"
+Set the deadman timeout; 0 disables it.
+.br
+RPC: mm_setDeadman. Scope: trade.
+.TP
+.B "\-\-timeout\-ms UINT"
+Required. Deadman timeout in milliseconds; zero disables it.
+
+.SS "gateway-token"
+Get a market\-data gateway JWT.
+.br
+RPC: mm_gatewayToken. Scope: any.
+No parameters.
+
+.SS "place"
+Place an order; price and quantity are raw on\-chain integers.
+.br
+RPC: mm_placeOrder. Scope: trade.
+.TP
+.B "\-\-book STR"
+Required. Order book identifier.
+.TP
+.B "\-\-side BUY|SELL"
+Required. buy or sell.
+.TP
+.B "\-\-price AMOUNT"
+Required. Raw integer price.
+.TP
+.B "\-\-quantity AMOUNT"
+Required. Raw integer total quantity.
+.TP
+.B "\-\-tif GTC|IOC"
+Required. gtc or ioc.
+.TP
+.B "\-\-post\-only | \-\-no\-post\-only"
+Optional. Enable or disable post\-only execution.
+.TP
+.B "\-\-ts UINT"
+Optional. Unix milliseconds; filled automatically when omitted.
+
+.SS "batch"
+Place 1\-50 orders; \-\-orders @file.json.
+.br
+RPC: mm_placeOrders. Scope: trade.
+.TP
+.B "\-\-orders ORDERS"
+Required. JSON order array or @FILE; an object containing an orders array is
+also accepted.
+
+.SS "modify"
+Modify an order; quantity is the new total, remaining is the new remainder.
+.br
+RPC: mm_modifyOrder. Scope: trade.
+.TP
+.B "\-\-order\-id ID"
+Required. Order ID returned by the desk.
+.TP
+.B "\-\-price AMOUNT"
+Optional. Raw integer price.
+.TP
+.B "\-\-quantity AMOUNT"
+Optional. Raw integer total quantity.
+.TP
+.B "\-\-remaining NONNEGATIVE"
+Optional. New remaining quantity; zero is allowed.
+.TP
+.B "\-\-ts UINT"
+Optional. Unix milliseconds; filled automatically when omitted.
+
+.SS "cancel"
+Cancel one order.
+.br
+RPC: mm_cancelOrder. Scope: trade.
+.TP
+.B "\-\-order\-id ID"
+Required. Order ID returned by the desk.
+.TP
+.B "\-\-ts UINT"
+Optional. Unix milliseconds; filled automatically when omitted.
+
+.SS "cancel-all"
+Cancel all orders, optionally limited to one book.
+.br
+RPC: mm_cancelAll. Scope: trade.
+.TP
+.B "\-\-book STR"
+Optional. Order book identifier.
+.TP
+.B "\-\-ts UINT"
+Optional. Unix milliseconds; filled automatically when omitted.
+
+.SS "open-orders"
+List live orders.
+.br
+RPC: mm_openOrders. Scope: any.
+.TP
+.B "\-\-book STR"
+Optional. Order book identifier.
+
+.SS "order"
+Get an order and its fills.
+.br
+RPC: mm_getOrder. Scope: any.
+.TP
+.B "\-\-order\-id ID"
+Required. Order ID returned by the desk.
+
+.SS "orders"
+List order history; from is inclusive and to exclusive, in Unix milliseconds.
+.br
+RPC: mm_listOrders. Scope: any.
+.TP
+.B "\-\-book STR"
+Optional. Order book identifier.
+.TP
+.B "\-\-from UINT"
+Optional. Inclusive lower timestamp bound in Unix milliseconds.
+.TP
+.B "\-\-to UINT"
+Optional. Exclusive upper timestamp bound in Unix milliseconds.
+.TP
+.B "\-\-state STR"
+Optional. Server\-side state filter.
+.TP
+.B "\-\-limit UINT"
+Optional. Maximum number of records.
+.TP
+.B "\-\-offset UINT"
+Optional. Number of records to skip.
+
+.SS "request"
+Get a request result.
+.br
+RPC: mm_getRequest. Scope: any.
+.TP
+.B "\-\-pool\-request\-id ID"
+Required. Pool request ID returned by the desk.
+
+.SS "requests"
+List request history.
+.br
+RPC: mm_listRequests. Scope: any.
+.TP
+.B "\-\-book STR"
+Optional. Order book identifier.
+.TP
+.B "\-\-from UINT"
+Optional. Inclusive lower timestamp bound in Unix milliseconds.
+.TP
+.B "\-\-to UINT"
+Optional. Exclusive upper timestamp bound in Unix milliseconds.
+.TP
+.B "\-\-state STR"
+Optional. Server\-side state filter.
+.TP
+.B "\-\-limit UINT"
+Optional. Maximum number of records.
+.TP
+.B "\-\-offset UINT"
+Optional. Number of records to skip.
+
+.SS "balances"
+Get desk balances.
+.br
+RPC: mm_balances. Scope: any.
+No parameters.
+
+.SS "deposits"
+List deposit records.
+.br
+RPC: mm_deposits. Scope: any.
+No parameters.
+
+.SS "withdraw"
+Withdraw to your own Cura account address.
+.br
+RPC: mm_withdraw. Scope: withdraw.
+.TP
+.B "\-\-token TOKEN"
+Required. Asset address or configured asset name.
+.TP
+.B "\-\-amount AMOUNT"
+Required. Positive raw integer amount.
+.TP
+.B "\-\-to STR"
+Required. Owner's Cura account address.
+.TP
+.B "\-\-ts UINT"
+Optional. Unix milliseconds; filled automatically when omitted.
+
+.SS "withdrawals"
+List withdrawal records.
+.br
+RPC: mm_withdrawals. Scope: any.
+No parameters.
+
+.SS "algo-place"
+Create a TWAP / VWAP schedule; times are Unix milliseconds.
+.br
+RPC: mm_placeAlgo. Scope: trade.
+.TP
+.B "\-\-book STR"
+Required. Order book identifier.
+.TP
+.B "\-\-side BUY|SELL"
+Required. buy or sell.
+.TP
+.B "\-\-quantity AMOUNT"
+Required. Raw integer total quantity.
+.TP
+.B "\-\-limit\-price AMOUNT"
+Required. Worst acceptable slice price as a raw integer.
+.TP
+.B "\-\-start UINT"
+Optional. Schedule start in Unix milliseconds; defaults to now.
+.TP
+.B "\-\-end UINT"
+Required. Schedule end in Unix milliseconds.
+.TP
+.B "\-\-interval\-ms UINT"
+Required. Positive slice interval in milliseconds.
+.TP
+.B "\-\-kind TWAP|VWAP"
+Required. twap or vwap.
+.TP
+.B "\-\-ts UINT"
+Optional. Unix milliseconds; filled automatically when omitted.
+
+.SS "algo-cancel"
+Cancel an algorithmic order.
+.br
+RPC: mm_cancelAlgo. Scope: trade.
+.TP
+.B "\-\-parent\-id ID"
+Required. Algorithmic order ID returned by the desk.
+.TP
+.B "\-\-ts UINT"
+Optional. Unix milliseconds; filled automatically when omitted.
+
+.SS "algo-pause"
+Pause an algorithmic order.
+.br
+RPC: mm_pauseAlgo. Scope: trade.
+.TP
+.B "\-\-parent\-id ID"
+Required. Algorithmic order ID returned by the desk.
+.TP
+.B "\-\-ts UINT"
+Optional. Unix milliseconds; filled automatically when omitted.
+
+.SS "algo-resume"
+Resume an algorithmic order.
+.br
+RPC: mm_resumeAlgo. Scope: trade.
+.TP
+.B "\-\-parent\-id ID"
+Required. Algorithmic order ID returned by the desk.
+.TP
+.B "\-\-ts UINT"
+Optional. Unix milliseconds; filled automatically when omitted.
+
+.SS "algo"
+Get an algorithmic order and its slices.
+.br
+RPC: mm_getAlgo. Scope: any.
+.TP
+.B "\-\-parent\-id ID"
+Required. Algorithmic order ID returned by the desk.
+
+.SH ERRORS
+A result with status rejected is a business rejection even when the
+JSON-RPC request succeeded. Acceptance does not prove execution or settlement.
+.PP
+Unauthorized (-32001) requires authentication again. Stale timestamp
+(-32002) requires checking the clock. Rate limited (-32003) requires
+reducing request frequency. not_implemented, not_ready, internal, and
+not_found identify service-side failures. insufficient_balance refers
+to the desk's available balance.
+.PP
+Requests are not automatically retried. A disconnected or timed-out
+write may have executed; inspect orders, requests, withdrawals, or algorithm
+state before deciding to resubmit. Reconnection does not replay commands.
+.SH ENVIRONMENT
+.TP
+.B MM_DESK_URL
+Default WebSocket endpoint; overridden by --url.
+.TP
+.B MM_DESK_PYTHON
+Python executable used by the launcher; default is python3.
+.TP
+.BR MANPAGER , " PAGER"
+Used by the system man viewer according to its normal precedence.
+.SH FILES
+Files are relative to the application directory unless otherwise stated.
+.TP
+.B mm-desk.1
+This man(1) manual page.
+.TP
+.B markets.json
+Testnet trading pair parameters, keyed by desk book. Includes source and date.
+.TP
+.B assets.json
+Asset address, name, and decimal precision registry. Restart after changes.
+Known assets display their names followed by the complete address in
+parentheses.
+Formatting affects output only; requests retain raw addresses and integers.
+.TP
+.B desk_networks.json
+Desk endpoint to chain RPC, chain ID, pool owner and spot contract mapping.
+.TP
+.B accounts.json
+Public chain-owner associations scoped by endpoint and public API key.
+Read on each login. Contains no private seeds.
+.TP
+.B MANUAL.md
+Extended reference document for reading in a Markdown viewer.
+.TP
+.B EXAMPLES.md
+Separate command examples and walkthroughs.
+.SH EXIT STATUS
+.TP
+.B 0
+Successful command completion or a help request.
+.TP
+.B 1
+Runtime validation, connection, query, or RPC failure.
+.TP
+.B 2
+Invalid startup arguments or a business rejection in command mode.
+.TP
+.B 130
+Interrupted by the user.
+.SH NOTES
+The simulator checks protocol interactions and signatures, not live matching,
+settlement, timed deadman cancellation, or actual algorithm execution.
+.PP
+The application does not persist seeds, signatures, JWTs, or command history
+to its own logs. Requested results, including gateway JWTs, are printed.
+.SH SEE ALSO
+.BR man (1),
+.BR less (1)

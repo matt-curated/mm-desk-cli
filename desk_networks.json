@@ -1,0 +1,8 @@
+{
+  "wss://desk.testnet.curated.finance": {
+    "rpc_url": "https://rpc.testnet.curated.finance",
+    "chain_id": 111111111111,
+    "pool_owner": "0x8a6ec99a0b55a63797801cc8dc6e962ba0e3fc84",
+    "spot_contract": "0x7f6471e342706340aa357edd8d5fc577bb0959c1"
+  }
+}

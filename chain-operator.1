@@ -1,0 +1,165 @@
+.TH CHAIN-OPERATOR 1 "November 19, 2026" "Cura CLI 1.0.0" "User Commands"
+.SH NAME
+chain-operator \- query Cura Chain balances and transfer assets
+.SH SYNOPSIS
+.B chain-operator
+.RB [ \-\-help | \-\-version | \-\-manual ]
+.br
+.B chain-operator balance
+.I ADDRESS
+.RI [ options ]
+.br
+.B chain-operator transfer
+.RI "key-options amount-options"
+.BI \-\-to " ADDRESS"
+.RI [ options ]
+.br
+.B chain-operator address
+.I key-options
+.br
+.B chain-operator receipt
+.I TXHASH
+.RI [ options ]
+.SH DESCRIPTION
+A standalone chain client. Desk login is not required.
+Asset addresses, names and precision are shared with mm-desk through
+assets.json.
+Transfer encoding follows the supplied transfer.py reference. Private-key
+signing uses native libsecp256k1 through coincurve.
+.PP
+Use --help or COMMAND --help for command options. --manual opens this page
+with the system man(1) viewer and its normal pager configuration.
+.SH COMMANDS
+.SS balance
+.B balance ADDRESS [--limit N] [--rpc-url URL] [--timeout SECONDS] [--json]
+.PP
+Query any Cura account address. balances and check-balance are aliases.
+Follows leaf_getLeafByOwner cursors. The page limit is between 1 and 1000;
+the default is 1000. A repeated page is an error, not a duplicated balance.
+.PP
+Amounts are aggregated exactly. Unknown asset precision is not inferred.
+This query reports account balance leaves; transfer selection separately
+requires unspent, unlocked, non-pending leaves.
+.SS transfer
+.B transfer --to ADDRESS (--key-file FILE | --master-file FILE) --token TOKEN
+.br
+.B (--amount DECIMAL | --raw-amount INTEGER) [options]
+.PP
+Build a signed transfer with receiver output and change, then simulate it.
+The default is dry-run: no transaction is broadcast without --yes.
+.TP
+.BI \-\-to " ADDRESS"
+Destination Cura account address, not its EVM address.
+.TP
+.BI \-\-key-file " FILE"
+32-byte secp256k1 private key as hexadecimal text. No private-key argument
+value is accepted directly on the command line.
+.TP
+.BI \-\-master-file " FILE"
+Derive the chain key from an mm-keys.py master seed. Mutually exclusive
+with --key-file.
+.TP
+.BI \-\-token " TOKEN"
+Configured asset name or operator address.
+.TP
+.BI \-\-amount " DECIMAL"
+Amount in token units. Converted exactly using assets.json precision.
+No exponent or fractional smallest unit is accepted.
+.TP
+.BI \-\-raw-amount " INTEGER"
+Positive amount in smallest units. Mutually exclusive with --amount.
+.TP
+.BI \-\-leaf " ADDRESS"
+Select an input leaf. Repeat to select several. Duplicates and mixed asset
+IDs are rejected. By default, select largest eligible leaves first.
+.TP
+.BI \-\-chain-id " INTEGER"
+EIP-712 chain ID. Default: 111111111111 (testnet).
+.TP
+.B \-\-dry-run
+Simulate only; this is the default.
+.TP
+.B \-\-yes
+Submit after a successful simulation. Never automatically resubmits.
+Mutually exclusive with --dry-run.
+.TP
+.B \-\-no-wait
+Return after the node accepts submission, without waiting for finality.
+.TP
+.BI \-\-wait-timeout " SECONDS"
+Finality deadline. Default: 120 seconds.
+.SS address
+.B address (--key-file FILE | --master-file FILE) [--json]
+.PP
+Print the public Cura account address and EVM address. Does not access the
+network or print the private key.
+.SS receipt
+.B receipt TXHASH [--owner ADDRESS] [--wait] [--wait-timeout SECONDS]
+.PP
+Query a transaction receipt. --wait polls until Finalized, Failed,
+Conflicted, or the deadline. --owner supplies the x-app-key routing header.
+This command never submits a transaction.
+.SH COMMON OPTIONS
+Network commands accept the following options after the command name.
+.TP
+.BI \-\-rpc-url " URL"
+Chain JSON-RPC endpoint. Default: https://rpc.testnet.curated.finance.
+.TP
+.BI \-\-timeout " SECONDS"
+HTTP request timeout. Default: 15 seconds.
+.TP
+.B \-\-json
+Use JSON output. Balance queries otherwise show a table. Transfer,
+address and receipt results are JSON in either mode. Progress goes to stderr.
+.SH TRANSFER RESULTS
+A successful dry-run reports status dry_run and submitted false.
+With --yes, submitted means the node accepted the transaction; finalized
+means a finalized receipt was observed. The locally computed transaction
+hash must match the node's response.
+.PP
+A submission timeout or connection loss can leave execution uncertain.
+The error retains the transaction hash. Query its receipt before deciding
+to resubmit. A finality timeout does not roll back a submitted transfer.
+.SH DESK TRANSFERS
+Use mm-desk's transfer to-desk command for deposit_pool, and transfer
+from-desk for mm_withdraw. Sending an ordinary chain transfer to the pool
+owner is not the desk deposit protocol.
+.SH ENVIRONMENT
+.TP
+.B CHAIN_OPERATOR_PYTHON
+Python executable override. The launcher otherwise uses the adjacent
+\&.venv/bin/python when present, then python3.
+.TP
+.BR MANPAGER , " PAGER"
+Interpreted by the system man viewer according to its normal rules.
+.SH FILES
+.TP
+.B markets.json
+Testnet trading pair parameters, keyed by desk book. Includes source and date.
+.TP
+.B assets.json
+Shared address-to-asset-name and decimal precision registry. Restart
+commands after editing. Display annotations never alter request addresses.
+.TP
+.B requirements.txt
+Pinned dependencies for the shared Python environment.
+.TP
+.B EXAMPLES.md
+Separate command examples for both tools.
+.SH EXIT STATUS
+.TP
+.B 0
+Successful query, simulation, requested submission, or help display.
+.TP
+.B 1
+Validation, simulation, RPC, submission or finality failure.
+.TP
+.B 2
+Invalid command-line syntax.
+.TP
+.B 130
+Interrupted. A submitted transaction may still execute.
+.SH SEE ALSO
+.BR mm-desk (1),
+.BR man (1),
+.BR less (1)

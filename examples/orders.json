@@ -1,0 +1,4 @@
+[
+  {"book":"btc_usdt","side":"buy","price":"6000000","quantity":"10000","tif":"gtc","post_only":true},
+  {"book":"btc_usdt","side":"sell","price":"6200000","quantity":"10000","tif":"gtc","post_only":true}
+]
